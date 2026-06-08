@@ -7,6 +7,7 @@ import { ArrowLeftIcon, SunIcon, MoonIcon, StarIcon, ClockIcon } from "./icons.j
 import { useTheme } from "./theme.js";
 import { astroReport, astroEvents } from "./astro.js";
 import { getApod, getNeo } from "./nasa.js";
+import { getISSPasses } from "./iss.js";
 import "./astro-page.css";
 
 const LAT = -10.1667,
@@ -25,6 +26,7 @@ const fmtDur = (s) => {
   return `${h}h${String(m).padStart(2, "0")}`;
 };
 const daysUntil = (d, now) => (d ? Math.max(0, Math.round((d - now) / 86400000)) : null);
+const fmtMin = (s) => `${Math.floor(s / 60)}m${String(Math.round(s % 60)).padStart(2, "0")}s`;
 
 function useNow(intervalMs = 30000) {
   const [now, setNow] = useState(() => new Date());
@@ -100,6 +102,7 @@ export default function Astro() {
   );
   const apod = useAsync(getApod);
   const neo = useAsync(getNeo);
+  const iss = useAsync(() => getISSPasses({ lat: LAT, lon: LON, days: 3 }));
 
   return (
     <div className={"dash sky-root" + (theme === "light" ? " light" : "")}>
@@ -274,6 +277,44 @@ export default function Astro() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* ── ISS passes ── */}
+        <section className="sky-card">
+          <div className="sky-card-head">
+            <div className="sky-card-eyebrow">
+              <StarIcon width={13} height={13} /> ISS · próximas passagens
+            </div>
+            {iss.data && (
+              <span className="sky-count">{iss.data.passes.filter((p) => p.visible).length} visível(is)</span>
+            )}
+          </div>
+          {iss.loading ? (
+            <div className="sky-apod-skel">Calculando passagens…</div>
+          ) : iss.error || !iss.data ? (
+            <div className="sky-apod-skel">Não foi possível obter os dados orbitais agora.</div>
+          ) : iss.data.passes.length === 0 ? (
+            <div className="sky-apod-skel">Nenhuma passagem acima de 10° nos próximos 3 dias.</div>
+          ) : (
+            <div className="sky-iss">
+              {iss.data.passes.slice(0, 6).map((p, i) => (
+                <div className={"sky-iss-row" + (p.visible ? " is-visible" : "")} key={i}>
+                  <span className="sky-iss-when">
+                    <span className="sky-iss-day">{fmtDM(p.peak)}</span>
+                    <span className="mono">{fmtT(p.start)}</span>
+                  </span>
+                  <span className="sky-iss-path mono">
+                    {p.dirStart} → {p.dirPeak} → {p.dirEnd}
+                  </span>
+                  <span className="sky-iss-el mono">{p.maxEl}°</span>
+                  <span className="sky-iss-dur mono">{fmtMin(p.durationSec)}</span>
+                  <span className={"sky-badge " + (p.visible ? "is-on" : "is-up")}>
+                    {p.visible ? "visível" : "diurna"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* ── Events calendar ── */}

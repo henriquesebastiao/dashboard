@@ -163,7 +163,8 @@ function getWeather() {
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
     `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m` +
-    `&daily=sunrise,sunset,daylight_duration&forecast_days=1&timezone=auto`;
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,` +
+    `sunrise,sunset,daylight_duration&forecast_days=7&timezone=auto`;
   _weatherPromise = fetch(url)
     .then((r) => {
       if (!r.ok) throw new Error("net");
@@ -173,6 +174,14 @@ function getWeather() {
       const c = d.current;
       const day = d.daily || {};
       const [iconKey, label] = mapWeather(c.weather_code);
+      const days = (day.time || []).map((t, i) => ({
+        date: t,
+        code: day.weather_code?.[i],
+        tmax: Math.round(day.temperature_2m_max?.[i]),
+        tmin: Math.round(day.temperature_2m_min?.[i]),
+        precip: day.precipitation_probability_max?.[i] ?? null,
+        uv: day.uv_index_max?.[i] ?? null,
+      }));
       const w = {
         temp: Math.round(c.temperature_2m),
         feels: Math.round(c.apparent_temperature),
@@ -181,6 +190,8 @@ function getWeather() {
         sunrise: day.sunrise?.[0] || null,
         sunset: day.sunset?.[0] || null,
         daylight: day.daylight_duration?.[0] || null,
+        uvMax: day.uv_index_max?.[0] ?? null,
+        days,
         iconKey,
         label,
         ok: true,
@@ -211,6 +222,74 @@ function useWeather() {
     };
   }, []);
   return w;
+}
+
+/* ── air quality + UV (Open-Meteo air-quality API) ───── */
+let _airPromise = null;
+function getAir() {
+  if (_airPromise) return _airPromise;
+  const url =
+    `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}` +
+    `&current=us_aqi,pm2_5,pm10,uv_index,ozone&timezone=auto`;
+  _airPromise = fetch(url)
+    .then((r) => {
+      if (!r.ok) throw new Error("air");
+      return r.json();
+    })
+    .then((d) => {
+      const c = d.current || {};
+      const a = {
+        aqi: c.us_aqi != null ? Math.round(c.us_aqi) : null,
+        pm25: c.pm2_5 ?? null,
+        pm10: c.pm10 ?? null,
+        ozone: c.ozone ?? null,
+        uv: c.uv_index ?? null,
+        ok: true,
+      };
+      try {
+        localStorage.setItem("dash.air", JSON.stringify(a));
+      } catch (e) {} // eslint-disable-line no-empty, no-unused-vars
+      return a;
+    });
+  return _airPromise;
+}
+function useAir() {
+  const [a, setA] = useState(() => {
+    try {
+      const c = localStorage.getItem("dash.air");
+      if (c) return { ...JSON.parse(c), loading: true };
+    } catch (e) {} // eslint-disable-line no-empty, no-unused-vars
+    return { loading: true };
+  });
+  useEffect(() => {
+    let on = true;
+    getAir()
+      .then((d) => on && setA({ ...d, loading: false }))
+      .catch(() => on && setA((p) => ({ ...p, loading: false, error: !p.ok })));
+    return () => {
+      on = false;
+    };
+  }, []);
+  return a;
+}
+
+/* AQI (US) + UV index → label + color */
+function aqiInfo(aqi) {
+  if (aqi == null) return { label: "—", color: "#a3a3a3" };
+  if (aqi <= 50) return { label: "Boa", color: "#34d399" };
+  if (aqi <= 100) return { label: "Moderada", color: "#fbbf24" };
+  if (aqi <= 150) return { label: "Insalubre (sensíveis)", color: "#fb923c" };
+  if (aqi <= 200) return { label: "Insalubre", color: "#f87171" };
+  if (aqi <= 300) return { label: "Muito insalubre", color: "#c084fc" };
+  return { label: "Perigosa", color: "#ef4444" };
+}
+function uvInfo(uv) {
+  if (uv == null) return { label: "—", color: "#a3a3a3" };
+  if (uv < 3) return { label: "Baixo", color: "#34d399" };
+  if (uv < 6) return { label: "Moderado", color: "#fbbf24" };
+  if (uv < 8) return { label: "Alto", color: "#fb923c" };
+  if (uv < 11) return { label: "Muito alto", color: "#f87171" };
+  return { label: "Extremo", color: "#c084fc" };
 }
 
 /* ── clock ──────────────────────────────────────────── */
@@ -361,10 +440,82 @@ function AstroCard({ now, weather }) {
   );
 }
 
+/* Clima estendido — previsão de 7 dias + qualidade do ar e índice UV. */
+const weekdayShort = (iso) => {
+  const d = new Date(iso + "T12:00:00");
+  const s = d.toLocaleDateString("pt-BR", { weekday: "short" });
+  return s.replace(".", "");
+};
+function WeatherDetail({ weather, air }) {
+  const days = weather.days || [];
+  const uv = uvInfo(weather.uvMax);
+  const aq = aqiInfo(air.aqi);
+
+  return (
+    <section className="wx-card">
+      <div className="wx-eyebrow">
+        <SunIcon width={13} height={13} /> Clima · próximos 7 dias
+      </div>
+
+      <div className="wx-week">
+        {days.length === 0 ? (
+          <div className="wx-skel">carregando previsão…</div>
+        ) : (
+          days.map((d, i) => {
+            const WI = WEATHER_ICON[mapWeather(d.code)[0]] || WEATHER_ICON.cloud;
+            return (
+              <div className={"wx-day" + (i === 0 ? " is-today" : "")} key={d.date}>
+                <span className="wx-day-name">{i === 0 ? "hoje" : weekdayShort(d.date)}</span>
+                <WI width={22} height={22} className="wx-day-ico" />
+                <span className="wx-day-temp mono">
+                  <strong>{d.tmax}°</strong>
+                  <span className="wx-day-min">{d.tmin}°</span>
+                </span>
+                <span className="wx-day-rain mono">
+                  <DropIcon width={11} height={11} />
+                  {d.precip != null ? `${d.precip}%` : "—"}
+                </span>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <div className="wx-air">
+        <div className="wx-air-item">
+          <span className="wx-air-label">Qualidade do ar</span>
+          <span className="wx-air-val">
+            <span className="wx-badge" style={{ "--c": aq.color }}>
+              {air.aqi != null ? `AQI ${air.aqi}` : "—"}
+            </span>
+            <span className="wx-air-desc">{aq.label}</span>
+          </span>
+        </div>
+        <div className="wx-air-item">
+          <span className="wx-air-label">Índice UV (máx. hoje)</span>
+          <span className="wx-air-val">
+            <span className="wx-badge" style={{ "--c": uv.color }}>
+              {weather.uvMax != null ? weather.uvMax.toFixed(1) : "—"}
+            </span>
+            <span className="wx-air-desc">{uv.label}</span>
+          </span>
+        </div>
+        <div className="wx-air-item">
+          <span className="wx-air-label">Partículas</span>
+          <span className="wx-air-val mono wx-air-pm">
+            PM2.5 {air.pm25 != null ? Math.round(air.pm25) : "—"} · PM10 {air.pm10 != null ? Math.round(air.pm10) : "—"}{" "}
+            µg/m³
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ════════════════════════════════════════════════════
    EDITORIAL BOARD  (structured cards / numbered)
    ════════════════════════════════════════════════════ */
-function EditorialBoard({ now, weather, links }) {
+function EditorialBoard({ now, weather, air, links }) {
   const WI = WEATHER_ICON[weather.iconKey || "cloud"] || WEATHER_ICON.cloud;
   return (
     <div className="ed-board">
@@ -425,6 +576,9 @@ function EditorialBoard({ now, weather, links }) {
         </div>
       </div>
 
+      {/* clima estendido: 7 dias + ar/UV */}
+      <WeatherDetail weather={weather} air={air} />
+
       {/* astronomia */}
       <AstroCard now={now} weather={weather} />
 
@@ -475,11 +629,12 @@ function EditorialBoard({ now, weather, links }) {
 export default function Dashboard() {
   const now = useClock();
   const weather = useWeather();
+  const air = useAir();
   const { theme, toggle } = useTheme();
 
   return (
     <div className={"dash" + (theme === "light" ? " light" : "")}>
-      <EditorialBoard now={now} weather={weather} links={LINKS} />
+      <EditorialBoard now={now} weather={weather} air={air} links={LINKS} />
       {/* theme toggle — fixed top-right corner of the board */}
       <button
         className="icon-btn"

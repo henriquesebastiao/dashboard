@@ -378,6 +378,56 @@
 .dash .sky-ev--estacao .sky-ev-title {
   color: rgb(129, 140, 248);
 }
+.dash .sky-ev--meteoro .sky-ev-title {
+  color: rgb(251, 146, 60);
+}
+
+/* ISS passes */
+.dash .sky-iss {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dash .sky-iss-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 0.5fr 0.7fr auto;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgb(var(--ink-300));
+}
+.dash .sky-iss-row:hover {
+  background: rgba(var(--fg-rgb), 0.03);
+}
+.dash .sky-iss-row.is-visible {
+  background: rgba(52, 211, 153, 0.07);
+}
+.dash .sky-iss-when {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.dash .sky-iss-day {
+  font-size: 11px;
+  color: rgb(var(--ink-500));
+  text-transform: capitalize;
+}
+.dash .sky-iss-when .mono {
+  font-size: 14px;
+  color: rgb(var(--ink-100));
+  font-variant-numeric: tabular-nums;
+}
+.dash .sky-iss-path {
+  color: rgb(var(--ink-300));
+}
+.dash .sky-iss-el,
+.dash .sky-iss-dur {
+  color: rgb(var(--ink-400));
+  font-variant-numeric: tabular-nums;
+}
 
 /* NEO */
 .dash .sky-neo {
@@ -468,6 +518,21 @@
   }
   .dash .sky-apod-info p {
     max-height: none;
+  }
+  .dash .sky-iss-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+    border: 1px solid rgba(var(--fg-rgb), 0.06);
+    padding: 12px 14px;
+  }
+  .dash .sky-iss-when {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .dash .sky-iss-path {
+    grid-column: 1 / -1;
   }
 }
 

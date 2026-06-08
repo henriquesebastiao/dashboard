@@ -230,6 +230,19 @@ const push = (list, date, emoji, title, kind) => {
   if (date) list.push({ date, emoji, title, kind });
 };
 
+/* major annual meteor showers (approx. peak date + radiant) */
+const SHOWERS = [
+  { name: "Quadrântidas", m: 1, d: 3, radiant: "Boieiro", zhr: 110 },
+  { name: "Líridas", m: 4, d: 22, radiant: "Lira", zhr: 18 },
+  { name: "Eta Aquáridas", m: 5, d: 6, radiant: "Aquário", zhr: 50 },
+  { name: "Delta Aquáridas", m: 7, d: 30, radiant: "Aquário", zhr: 25 },
+  { name: "Perseidas", m: 8, d: 12, radiant: "Perseu", zhr: 100 },
+  { name: "Oriônidas", m: 10, d: 21, radiant: "Órion", zhr: 20 },
+  { name: "Leônidas", m: 11, d: 17, radiant: "Leão", zhr: 15 },
+  { name: "Gemínidas", m: 12, d: 14, radiant: "Gêmeos", zhr: 150 },
+  { name: "Úrsidas", m: 12, d: 22, radiant: "Ursa Menor", zhr: 10 },
+];
+
 export function astroEvents(date = new Date(), horizonDays = 270) {
   const out = [];
   try {
@@ -307,6 +320,14 @@ export function astroEvents(date = new Date(), horizonDays = 270) {
       /* ignore */
     }
 
+    /* meteor showers — next peak (this year or next) */
+    for (const sh of SHOWERS) {
+      for (const yr of [date.getFullYear(), date.getFullYear() + 1]) {
+        const dt = new Date(yr, sh.m - 1, sh.d, 3, 0, 0); // pré-amanhecer
+        push(out, dt, "☄️", `${sh.name} — radiante ${sh.radiant} (~${sh.zhr}/h)`, "meteoro");
+      }
+    }
+
     return out.filter((e) => e.date >= date && e.date.getTime() <= limit).sort((a, b) => a.date - b.date);
   } catch {
     return out.sort((a, b) => a.date - b.date);
@@ -317,6 +338,17 @@ function horizonOf(time, observer, body) {
   const e = Astronomy.Equator(body, time, observer, true, true);
   const h = Astronomy.Horizon(time, observer, e.ra, e.dec, "normal");
   return { alt: h.altitude, az: h.azimuth };
+}
+
+/* sun altitude (degrees) for a moment/place — used for ISS pass visibility */
+export function sunAltitude(date, lat, lon) {
+  try {
+    const obs = new Astronomy.Observer(lat, lon, 200);
+    const t = Astronomy.MakeTime(date);
+    return horizonOf(t, obs, Astronomy.Body.Sun).alt;
+  } catch {
+    return null;
+  }
 }
 
 export function moonInfo(date = new Date()) {
