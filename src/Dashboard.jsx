@@ -45,7 +45,7 @@ import {
 } from "./icons.jsx";
 import { useTheme } from "./theme.js";
 import { scheduleStatus, CATEGORIES } from "./schedule.js";
-import { moonInfo, visiblePlanets } from "./astro.js";
+import { moonInfo, visiblePlanets, observingIndex, nextSkyAlert } from "./astro.js";
 import Search from "./Search.jsx";
 import DailyFact from "./DailyFact.jsx";
 
@@ -162,7 +162,7 @@ function getWeather() {
   if (_weatherPromise) return _weatherPromise;
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
-    `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m` +
+    `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,cloud_cover` +
     `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,` +
     `sunrise,sunset,daylight_duration&forecast_days=7&timezone=auto`;
   _weatherPromise = fetch(url)
@@ -187,6 +187,7 @@ function getWeather() {
         feels: Math.round(c.apparent_temperature),
         humidity: Math.round(c.relative_humidity_2m),
         wind: Math.round(c.wind_speed_10m),
+        clouds: c.cloud_cover != null ? Math.round(c.cloud_cover) : null,
         sunrise: day.sunrise?.[0] || null,
         sunset: day.sunset?.[0] || null,
         daylight: day.daylight_duration?.[0] || null,
@@ -367,6 +368,26 @@ function AstroCard({ now, weather }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [minuteKey]
   );
+
+  /* event alert (<48h) — recompute hourly */
+  const hourKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+  const alert = useMemo(
+    () => nextSkyAlert(now, 48),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [hourKey]
+  );
+
+  /* observing index — needs cloud cover + humidity from the weather feed */
+  const obs =
+    weather.ok && weather.clouds != null
+      ? observingIndex({
+          clouds: weather.clouds,
+          humidity: weather.humidity,
+          moonIllumination: moon.illumination,
+          isNight,
+        })
+      : null;
+
   return (
     <a className="astro-card" href="#/astro">
       <div className="astro-eyebrow">
@@ -374,7 +395,13 @@ function AstroCard({ now, weather }) {
           <StarIcon width={13} height={13} />
           Céu agora · {CITY}
         </span>
-        <ArrowRightIcon width={15} height={15} className="astro-go" />
+        {alert ? (
+          <span className="astro-alert" title={alert.title}>
+            {alert.emoji} {alert.hours <= 1 ? "agora" : `${alert.hours}h`}
+          </span>
+        ) : (
+          <ArrowRightIcon width={15} height={15} className="astro-go" />
+        )}
       </div>
 
       <div className="astro-body">
@@ -436,6 +463,18 @@ function AstroCard({ now, weather }) {
           </span>
         )}
       </div>
+
+      {obs && (
+        <div className="astro-obs" style={{ "--oc": obs.color }}>
+          <span className="astro-obs-label">Observação esta noite</span>
+          <span className="astro-obs-val">
+            <span className="astro-obs-badge">{obs.label}</span>
+            <span className="astro-obs-meta mono">
+              ☁ {obs.clouds}% · 💧 {obs.humidity}%
+            </span>
+          </span>
+        </div>
+      )}
     </a>
   );
 }

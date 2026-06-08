@@ -334,6 +334,47 @@ export function astroEvents(date = new Date(), horizonDays = 270) {
   }
 }
 
+/* ── observing index ("boa noite p/ observar?") ──
+   Combines cloud cover, humidity and (at night) moon glare into a 0–100 score.
+   Inputs: clouds 0–100, humidity 0–100, moonIllumination 0–1, isNight bool. */
+export function observingIndex({ clouds = 0, humidity = 0, moonIllumination = 0, isNight = true }) {
+  const cloudScore = 100 - clamp(clouds, 0, 100);
+  // humidity below ~45% is fine; penalise the excess
+  const humScore = clamp(100 - Math.max(0, humidity - 45) * 1.6, 0, 100);
+  // bright moon only hurts at night
+  const moonScore = isNight ? 100 - moonIllumination * 100 : 100;
+
+  const score = Math.round(cloudScore * 0.55 + humScore * 0.25 + moonScore * 0.2);
+  let label, color;
+  if (score >= 75) [label, color] = ["Excelente", "#34d399"];
+  else if (score >= 55) [label, color] = ["Boa", "#60a5fa"];
+  else if (score >= 35) [label, color] = ["Razoável", "#fbbf24"];
+  else [label, color] = ["Ruim", "#f87171"];
+
+  return { score, label, color, clouds: Math.round(clouds), humidity: Math.round(humidity), isNight };
+}
+
+function clamp(v, lo, hi) {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+/* ── next "alert" event (eclipse / meteor shower peak) within `withinHours` ──
+   Used to flash a badge on the dashboard when something is imminent. */
+export function nextSkyAlert(now = new Date(), withinHours = 48) {
+  try {
+    const limit = now.getTime() + withinHours * 3600000;
+    const events = astroEvents(now, 30).filter(
+      (e) => (e.kind === "eclipse" || e.kind === "meteoro") && e.date.getTime() <= limit
+    );
+    if (events.length === 0) return null;
+    const e = events[0];
+    const hours = Math.max(0, (e.date - now) / 3600000);
+    return { ...e, hours: Math.round(hours) };
+  } catch {
+    return null;
+  }
+}
+
 function horizonOf(time, observer, body) {
   const e = Astronomy.Equator(body, time, observer, true, true);
   const h = Astronomy.Horizon(time, observer, e.ra, e.dec, "normal");

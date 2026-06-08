@@ -5,10 +5,28 @@
 import { useState, useEffect, useMemo } from "react";
 import { ArrowLeftIcon, SunIcon, MoonIcon, StarIcon, ClockIcon } from "./icons.jsx";
 import { useTheme } from "./theme.js";
-import { astroReport, astroEvents } from "./astro.js";
+import { astroReport, astroEvents, observingIndex } from "./astro.js";
 import { getApod, getNeo } from "./nasa.js";
 import { getISSPasses } from "./iss.js";
+import SkyMap from "./SkyMap.jsx";
 import "./astro-page.css";
+
+/* lightweight current-conditions fetch (cloud cover + humidity) for the
+   observing index — separate from the dashboard weather feed. */
+function getSkyWeather() {
+  const url =
+    `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
+    `&current=relative_humidity_2m,cloud_cover&timezone=auto`;
+  return fetch(url)
+    .then((r) => {
+      if (!r.ok) throw new Error("net");
+      return r.json();
+    })
+    .then((d) => ({
+      clouds: Math.round(d.current.cloud_cover),
+      humidity: Math.round(d.current.relative_humidity_2m),
+    }));
+}
 
 const LAT = -10.1667,
   LON = -59.4583;
@@ -103,6 +121,16 @@ export default function Astro() {
   const apod = useAsync(getApod);
   const neo = useAsync(getNeo);
   const iss = useAsync(() => getISSPasses({ lat: LAT, lon: LON, days: 3 }));
+  const skyW = useAsync(getSkyWeather);
+
+  const obs = skyW.data
+    ? observingIndex({
+        clouds: skyW.data.clouds,
+        humidity: skyW.data.humidity,
+        moonIllumination: moon.illumination,
+        isNight: sun ? sun.isNight : true,
+      })
+    : null;
 
   return (
     <div className={"dash sky-root" + (theme === "light" ? " light" : "")}>
@@ -123,6 +151,48 @@ export default function Astro() {
             {fmtFullDate(now)} · {CITY}
           </div>
         </div>
+
+        {/* ── Mapa do céu agora ── */}
+        <section className="sky-card">
+          <div className="sky-card-head">
+            <div className="sky-card-eyebrow">
+              <StarIcon width={13} height={13} /> Mapa do céu agora
+            </div>
+            <span className="sky-count">zênite ao centro · horizonte na borda</span>
+          </div>
+          <SkyMap now={now} lat={LAT} lon={LON} theme={theme} />
+        </section>
+
+        {/* ── Clima astronômico (observação) ── */}
+        <section className="sky-card">
+          <div className="sky-card-head">
+            <div className="sky-card-eyebrow">
+              <ClockIcon width={13} height={13} /> Clima astronômico
+            </div>
+            {obs && <span className="sky-count">boa noite p/ observar?</span>}
+          </div>
+          {skyW.loading ? (
+            <div className="sky-apod-skel">Consultando condições…</div>
+          ) : skyW.error || !obs ? (
+            <div className="sky-apod-skel">Condições indisponíveis agora.</div>
+          ) : (
+            <div className="sky-obs" style={{ "--oc": obs.color }}>
+              <div className="sky-obs-score">
+                <span className="sky-obs-num mono">{obs.score}</span>
+                <span className="sky-obs-label">{obs.label}</span>
+              </div>
+              <div className="sky-obs-bar">
+                <div className="sky-obs-fill" style={{ width: `${obs.score}%` }} />
+              </div>
+              <div className="sky-obs-factors">
+                <span>☁ Nuvens {obs.clouds}%</span>
+                <span>💧 Umidade {obs.humidity}%</span>
+                <span>🌙 Lua {Math.round(moon.illumination * 100)}%</span>
+                <span>{obs.isNight ? "🌑 noite" : "☀ dia"}</span>
+              </div>
+            </div>
+          )}
+        </section>
 
         {/* ── NASA APOD ── */}
         <section className="sky-card sky-apod">
