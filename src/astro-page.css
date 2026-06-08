@@ -1,0 +1,481 @@
+/* astro-page.css — detailed astronomy page (#/astro) */
+
+.dash.sky-root {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.dash .sky-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 24px calc(48px + env(safe-area-inset-bottom));
+}
+
+.dash .sky-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.dash .sky-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(var(--ink-400));
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+.dash .sky-back:hover {
+  color: rgb(var(--ink-100));
+}
+
+.dash .sky-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.dash .sky-title-row h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: rgb(var(--ink-100));
+}
+.dash .sky-date {
+  font-size: 14px;
+  color: rgb(var(--ink-400));
+}
+
+/* cards */
+.dash .sky-card {
+  border-radius: 18px;
+  border: 1px solid rgba(var(--fg-rgb), 0.06);
+  background: rgba(var(--fg-rgb), 0.02);
+  padding: 22px 24px;
+  margin-bottom: 18px;
+}
+.dash .sky-moon {
+  background:
+    radial-gradient(120% 150% at 90% -20%, rgba(129, 140, 248, 0.18), transparent 60%),
+    radial-gradient(90% 120% at 0% 120%, rgba(52, 211, 153, 0.1), transparent 55%), rgba(var(--fg-rgb), 0.02);
+}
+.dash .sky-card-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .sky-card-eyebrow svg {
+  color: rgb(var(--ink-300));
+}
+.dash .sky-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.dash .sky-count {
+  font-size: 12px;
+  color: rgb(var(--ink-500));
+}
+
+/* moon hero */
+.dash .sky-moon-hero {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+.dash .sky-moon-emoji {
+  font-size: 76px;
+  line-height: 1;
+  filter: drop-shadow(0 0 22px rgba(129, 140, 248, 0.4));
+}
+.dash .sky-moon-name {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: rgb(var(--ink-100));
+  margin: 8px 0 12px;
+}
+.dash .sky-illum {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: rgb(var(--ink-400));
+}
+.dash .sky-illum-bar {
+  width: 140px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(var(--fg-rgb), 0.08);
+  overflow: hidden;
+}
+.dash .sky-illum-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgb(129, 140, 248), rgb(196, 181, 253));
+  transition: width 0.5s ease;
+}
+
+/* stat grids */
+.dash .sky-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px 20px;
+}
+.dash .sky-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.dash .sky-stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: rgb(var(--ink-500));
+}
+.dash .sky-stat-label svg {
+  color: rgb(var(--ink-400));
+  flex-shrink: 0;
+}
+.dash .sky-stat-val {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgb(var(--ink-100));
+  font-variant-numeric: tabular-nums;
+}
+
+/* moon pills */
+.dash .sky-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+.dash .sky-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 9999px;
+  border: 1px solid rgba(var(--fg-rgb), 0.08);
+  background: rgba(var(--fg-rgb), 0.03);
+  font-size: 13px;
+  color: rgb(var(--ink-200));
+}
+.dash .sky-pill em {
+  color: rgb(var(--ink-500));
+  font-style: normal;
+}
+
+/* twilight */
+.dash .sky-sub {
+  margin: 22px 0 10px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .sky-tw {
+  display: grid;
+  gap: 8px;
+}
+.dash .sky-tw-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(var(--fg-rgb), 0.03);
+  font-size: 13.5px;
+  color: rgb(var(--ink-300));
+}
+.dash .sky-tw-name {
+  color: rgb(var(--ink-400));
+}
+
+/* planets table */
+.dash .sky-table {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dash .sky-tr {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 0.9fr 0.6fr 0.8fr 0.7fr 0.7fr 0.8fr;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgb(var(--ink-300));
+}
+.dash .sky-tr:not(.sky-tr--head):hover {
+  background: rgba(var(--fg-rgb), 0.03);
+}
+.dash .sky-tr--head {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+  border-bottom: 1px solid rgba(var(--fg-rgb), 0.06);
+  border-radius: 0;
+  padding-bottom: 10px;
+}
+.dash .sky-tr.is-visible {
+  background: rgba(129, 140, 248, 0.06);
+}
+.dash .sky-pl-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: rgb(var(--ink-100));
+}
+.dash .sky-pl-sym {
+  font-size: 15px;
+  color: rgb(129, 140, 248);
+}
+.dash .sky-badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.dash .sky-badge.is-on {
+  background: rgba(52, 211, 153, 0.15);
+  color: rgb(52, 211, 153);
+}
+.dash .sky-badge.is-up {
+  background: rgba(var(--fg-rgb), 0.06);
+  color: rgb(var(--ink-300));
+}
+.dash .sky-badge.is-off {
+  color: rgb(var(--ink-600));
+}
+
+/* APOD */
+.dash .sky-apod-skel {
+  margin-top: 14px;
+  padding: 28px 0;
+  color: rgb(var(--ink-500));
+  font-size: 13.5px;
+  text-align: center;
+}
+.dash .sky-apod-body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 22px;
+  margin-top: 16px;
+  align-items: start;
+}
+.dash .sky-apod-media {
+  position: relative;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(var(--fg-rgb), 0.04);
+}
+.dash .sky-apod-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 340px;
+  object-fit: cover;
+}
+.dash .sky-apod-play {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 12px;
+}
+.dash .sky-apod-info h2 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgb(var(--ink-100));
+}
+.dash .sky-apod-info p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgb(var(--ink-400));
+  max-height: 260px;
+  overflow-y: auto;
+}
+.dash .sky-apod-credit {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgb(var(--ink-600));
+}
+
+/* events */
+.dash .sky-events {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dash .sky-ev {
+  display: grid;
+  grid-template-columns: 26px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.dash .sky-ev:hover {
+  background: rgba(var(--fg-rgb), 0.03);
+}
+.dash .sky-ev-emoji {
+  font-size: 18px;
+  text-align: center;
+}
+.dash .sky-ev-title {
+  color: rgb(var(--ink-100));
+  font-weight: 500;
+  min-width: 0;
+}
+.dash .sky-ev-date {
+  font-size: 13px;
+  color: rgb(var(--ink-400));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dash .sky-ev-rel {
+  font-size: 11.5px;
+  color: rgb(var(--ink-600));
+  white-space: nowrap;
+  min-width: 52px;
+  text-align: right;
+}
+.dash .sky-ev--eclipse .sky-ev-title,
+.dash .sky-ev--estacao .sky-ev-title {
+  color: rgb(129, 140, 248);
+}
+
+/* NEO */
+.dash .sky-neo {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dash .sky-neo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 11px 13px;
+  border-radius: 11px;
+  border: 1px solid rgba(var(--fg-rgb), 0.06);
+  background: rgba(var(--fg-rgb), 0.02);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+.dash .sky-neo-row:hover {
+  border-color: rgba(var(--fg-rgb), 0.16);
+}
+.dash .sky-neo-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgb(var(--ink-100));
+}
+.dash .sky-neo-flag {
+  color: #f59e0b;
+}
+.dash .sky-neo-meta {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 12.5px;
+  color: rgb(var(--ink-400));
+}
+.dash .sky-neo-lunar {
+  color: rgb(129, 140, 248);
+}
+
+.dash .sky-foot {
+  margin-top: 22px;
+  font-size: 12px;
+  color: rgb(var(--ink-600));
+  text-align: center;
+}
+
+/* mobile — collapse the planet table into stacked cards */
+@media (max-width: 720px) {
+  .dash .sky-tr--head {
+    display: none;
+  }
+  .dash .sky-tr {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+    border: 1px solid rgba(var(--fg-rgb), 0.06);
+    padding: 12px 14px;
+  }
+  .dash .sky-pl-name {
+    grid-column: 1 / -1;
+    font-size: 15px;
+  }
+  .dash .sky-tr span:nth-child(2)::before {
+    content: "Const · ";
+    color: rgb(var(--ink-600));
+  }
+  .dash .sky-tr span:nth-child(6)::before {
+    content: "↑ ";
+    color: rgb(var(--ink-600));
+  }
+  .dash .sky-tr span:nth-child(7)::before {
+    content: "↓ ";
+    color: rgb(var(--ink-600));
+  }
+  .dash .sky-apod-body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .dash .sky-apod-media img {
+    max-height: 260px;
+  }
+  .dash .sky-apod-info p {
+    max-height: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .dash .sky-title-row h1 {
+    font-size: 28px;
+  }
+  .dash .sky-moon-emoji {
+    font-size: 60px;
+  }
+}

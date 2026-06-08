@@ -1,0 +1,716 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* ─────────────────────────────────────────
+   TOKENS — Henrique Sebastião ink scale
+   Dashboard root scopes the theme so the
+   board can flip dark/light independently.
+   ───────────────────────────────────────── */
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+body {
+  background: #0a0a0a;
+}
+
+.dash {
+  /* dark (default) */
+  --ink-950: 10, 10, 10;
+  --ink-900: 17, 17, 17;
+  --ink-800: 26, 26, 26;
+  --ink-700: 38, 38, 38;
+  --ink-600: 64, 64, 64;
+  --ink-500: 115, 115, 115;
+  --ink-400: 163, 163, 163;
+  --ink-300: 212, 212, 212;
+  --ink-200: 229, 229, 229;
+  --ink-100: 245, 245, 245;
+  --fg-rgb: 255, 255, 255;
+  --accent: rgba(52, 211, 153, 0.8);
+  --accent-glow: rgba(52, 211, 153, 0.4);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  color-scheme: dark;
+  background-color: rgb(var(--ink-950));
+  color: rgb(var(--ink-100));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dash.light {
+  --ink-950: 255, 255, 255;
+  --ink-900: 245, 245, 245;
+  --ink-800: 229, 229, 229;
+  --ink-700: 212, 212, 212;
+  --ink-600: 163, 163, 163;
+  --ink-500: 115, 115, 115;
+  --ink-400: 82, 82, 82;
+  --ink-300: 64, 64, 64;
+  --ink-200: 38, 38, 38;
+  --ink-100: 17, 17, 17;
+  --fg-rgb: 0, 0, 0;
+  color-scheme: light;
+}
+
+.dash *,
+.dash *::before,
+.dash *::after {
+  box-sizing: border-box;
+}
+.dash ::selection {
+  background: rgb(var(--ink-100));
+  color: rgb(var(--ink-950));
+}
+
+/* ─── shared atoms ─── */
+.dash .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .mono {
+  font-family: var(--font-mono);
+}
+
+/* theme toggle / icon button */
+.dash .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  color: rgb(var(--ink-400));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.dash .icon-btn:hover {
+  background: rgba(var(--fg-rgb), 0.05);
+  color: rgb(var(--ink-100));
+}
+
+/* weather chip */
+.dash .weather-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(var(--ink-400));
+  font-size: 13px;
+  white-space: nowrap;
+}
+.dash .weather-chip .temp {
+  color: rgb(var(--ink-100));
+  font-weight: 500;
+}
+
+/* link card */
+.dash .link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(var(--fg-rgb), 0.05);
+  background: rgba(var(--fg-rgb), 0.02);
+  color: rgb(var(--ink-200));
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.18s ease;
+  outline: none;
+}
+.dash .link:hover {
+  border-color: rgba(var(--fg-rgb), 0.2);
+  background: rgba(var(--fg-rgb), 0.04);
+}
+.dash .link .link-ico {
+  color: rgb(var(--ink-300));
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: color 0.18s ease;
+}
+.dash .link:hover .link-ico {
+  color: rgb(var(--ink-100));
+}
+.dash .link .link-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--ink-100));
+  letter-spacing: -0.01em;
+}
+
+/* availability-style status dot */
+.dash .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ─── editorial board layout (responsive) ─── */
+.dash .ed-board {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 44px 52px;
+}
+.dash .ed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+}
+.dash .ed-clock {
+  font-size: 92px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: rgb(var(--ink-100));
+  font-variant-numeric: tabular-nums;
+}
+.dash .ed-side {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  gap: 14px;
+}
+.dash .ed-weather {
+  width: 248px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  border: 1px solid rgba(var(--fg-rgb), 0.05);
+  background: rgba(var(--fg-rgb), 0.02);
+  padding: 20px;
+}
+
+/* agenda card — current block + range, next in the background */
+.dash .agenda-card {
+  --cat: #818cf8;
+  position: relative;
+  display: block;
+  width: 248px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  border: 1px solid rgba(var(--fg-rgb), 0.05);
+  background: rgba(var(--fg-rgb), 0.02);
+  padding: 16px 18px;
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+.dash .agenda-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--cat);
+}
+.dash .agenda-card:hover {
+  border-color: rgba(var(--fg-rgb), 0.2);
+  background: rgba(var(--fg-rgb), 0.04);
+  transform: translateY(-1px);
+}
+.dash .agenda-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dash .agenda-card-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .agenda-card-eyebrow svg {
+  color: var(--cat);
+}
+.dash .agenda-card-go {
+  color: rgb(var(--ink-600));
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.dash .agenda-card:hover .agenda-card-go {
+  color: rgb(var(--ink-300));
+  transform: translateX(2px);
+}
+.dash .agenda-card-title {
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgb(var(--ink-100));
+}
+.dash .agenda-card-title--free {
+  color: rgb(var(--ink-400));
+}
+.dash .agenda-card-range {
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgb(var(--ink-400));
+  font-variant-numeric: tabular-nums;
+}
+.dash .agenda-card-progress {
+  margin-top: 12px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(var(--fg-rgb), 0.08);
+  overflow: hidden;
+}
+.dash .agenda-card-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--cat);
+  transition: width 0.4s ease;
+}
+.dash .agenda-card-next {
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: rgb(var(--ink-600));
+}
+.dash .agenda-card-next .mono {
+  color: rgb(var(--ink-400));
+}
+/* masonry-style packing: categories flow into balanced columns so uneven
+   link counts don't leave vertical gaps between cells */
+.dash .ed-grid {
+  flex: 1;
+  margin-top: 44px;
+  columns: 3;
+  column-gap: 28px;
+}
+.dash .ed-cat {
+  break-inside: avoid;
+  margin-bottom: 28px;
+}
+
+/* ─── astronomia ─── */
+.dash .astro-card {
+  display: block;
+  margin-top: 40px;
+  border-radius: 16px;
+  border: 1px solid rgba(var(--fg-rgb), 0.06);
+  background:
+    radial-gradient(120% 140% at 88% -10%, rgba(129, 140, 248, 0.16), transparent 60%),
+    radial-gradient(90% 120% at 10% 120%, rgba(52, 211, 153, 0.1), transparent 55%), rgba(var(--fg-rgb), 0.02);
+  padding: 18px 22px;
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+.dash a.astro-card:hover {
+  border-color: rgba(var(--fg-rgb), 0.18);
+  transform: translateY(-1px);
+}
+.dash .astro-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .astro-eyebrow > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.dash .astro-eyebrow svg {
+  color: rgb(var(--ink-300));
+}
+.dash .astro-go {
+  color: rgb(var(--ink-600));
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.dash a.astro-card:hover .astro-go {
+  color: rgb(var(--ink-300));
+  transform: translateX(2px);
+}
+.dash .astro-body {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.dash .astro-moon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.dash .astro-moon-emoji {
+  font-size: 42px;
+  line-height: 1;
+  filter: drop-shadow(0 0 14px rgba(129, 140, 248, 0.35));
+}
+.dash .astro-moon-name {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgb(var(--ink-100));
+}
+.dash .astro-moon-illum {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: rgb(var(--ink-400));
+}
+.dash .astro-stats {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 20px;
+  min-width: 240px;
+  padding-left: 28px;
+  border-left: 1px solid rgba(var(--fg-rgb), 0.06);
+}
+.dash .astro-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.dash .astro-stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: rgb(var(--ink-500));
+}
+.dash .astro-stat-label svg {
+  color: rgb(var(--ink-400));
+  flex-shrink: 0;
+}
+.dash .astro-stat-val {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgb(var(--ink-100));
+  font-variant-numeric: tabular-nums;
+}
+.dash .astro-planets {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(var(--fg-rgb), 0.06);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.dash .astro-planets-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .astro-planets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dash .astro-planet {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border-radius: 9999px;
+  border: 1px solid rgba(var(--fg-rgb), 0.08);
+  background: rgba(var(--fg-rgb), 0.03);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(var(--ink-200));
+}
+.dash .astro-planet-sym {
+  font-size: 15px;
+  color: rgb(129, 140, 248);
+  line-height: 1;
+}
+.dash .astro-planet-meta {
+  font-size: 11.5px;
+  color: rgb(var(--ink-500));
+  font-variant-numeric: tabular-nums;
+}
+.dash .astro-planets-empty {
+  font-size: 13px;
+  color: rgb(var(--ink-500));
+}
+
+/* ─── search bar ─── */
+.dash .ed-search {
+  position: relative;
+  margin-top: 40px;
+  max-width: 620px;
+}
+.dash .search {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(var(--fg-rgb), 0.08);
+  background: rgba(var(--fg-rgb), 0.03);
+  border-radius: 14px;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+.dash .search:focus-within {
+  border-color: rgba(var(--fg-rgb), 0.22);
+  background: rgba(var(--fg-rgb), 0.05);
+}
+.dash .search-engine {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(var(--fg-rgb), 0.08);
+  color: rgb(var(--ink-300));
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.dash .search-engine:hover {
+  color: rgb(var(--ink-100));
+}
+.dash .search-engine svg {
+  flex-shrink: 0;
+}
+.dash .search-engine .chev {
+  color: rgb(var(--ink-500));
+  transition: transform 0.2s ease;
+}
+.dash .search-engine.is-open .chev {
+  transform: rotate(180deg);
+}
+.dash .search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  min-width: 0;
+}
+.dash .search-input-wrap > svg {
+  color: rgb(var(--ink-500));
+  flex-shrink: 0;
+}
+.dash .search-field {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgb(var(--ink-100));
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 13px 0;
+}
+.dash .search-field::placeholder {
+  color: rgb(var(--ink-500));
+}
+.dash .search-kbd {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--fg-rgb), 0.12);
+  background: rgba(var(--fg-rgb), 0.04);
+  color: rgb(var(--ink-400));
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* engine dropdown + link results share a popover look */
+.dash .search-menu,
+.dash .search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  z-index: 20;
+  background: rgb(var(--ink-900));
+  border: 1px solid rgba(var(--fg-rgb), 0.1);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+.dash .search-menu {
+  left: 0;
+  min-width: 200px;
+}
+.dash .search-results {
+  left: 0;
+  right: 0;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.dash .search-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: rgb(var(--ink-300));
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.dash .search-opt svg {
+  color: rgb(var(--ink-400));
+  flex-shrink: 0;
+}
+.dash .search-opt:hover,
+.dash .search-opt.is-active {
+  background: rgba(var(--fg-rgb), 0.06);
+  color: rgb(var(--ink-100));
+}
+.dash .search-opt.is-active svg {
+  color: rgb(var(--ink-200));
+}
+.dash .search-result {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 9px;
+  text-decoration: none;
+}
+.dash .search-result:hover,
+.dash .search-result.is-active {
+  background: rgba(var(--fg-rgb), 0.06);
+}
+.dash .search-result .r-ico {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: rgb(var(--ink-300));
+}
+.dash .search-result .r-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--ink-100));
+}
+.dash .search-result .r-cat {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgb(var(--ink-500));
+}
+.dash .search-empty {
+  padding: 13px 12px;
+  color: rgb(var(--ink-500));
+  font-size: 13px;
+}
+
+/* tablet — 2 link columns; stack the side cards so the header stays short */
+@media (max-width: 880px) {
+  .dash .ed-grid {
+    columns: 2;
+  }
+  .dash .ed-side {
+    flex-direction: column;
+  }
+}
+
+/* mobile — stack everything, allow vertical scroll */
+@media (max-width: 640px) {
+  .dash {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .dash .ed-board {
+    height: auto;
+    min-height: 100%;
+    padding: 32px 20px calc(32px + env(safe-area-inset-bottom));
+  }
+  .dash .ed-header {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .dash .ed-clock {
+    font-size: clamp(64px, 22vw, 88px);
+  }
+  .dash .ed-side {
+    width: 100%;
+  }
+  .dash .ed-weather,
+  .dash .agenda-card {
+    width: 100%;
+  }
+  .dash .ed-grid {
+    columns: 1;
+    margin-top: 32px;
+  }
+  .dash .ed-cat {
+    margin-bottom: 24px;
+  }
+  .dash .astro-stats {
+    grid-template-columns: repeat(2, 1fr);
+    padding-left: 0;
+    border-left: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .dash .ed-board {
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+}
