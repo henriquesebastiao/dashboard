@@ -196,6 +196,16 @@ export function CheckIcon(p) {
     </svg>
   );
 }
+export function RefreshIcon(p) {
+  return (
+    <svg viewBox="0 0 24 24" {..._o} {...p}>
+      <path d="M4.5 9A7.5 7.5 0 0 1 18 7.5L19.5 9" />
+      <path d="M19.5 4.5V9H15" />
+      <path d="M19.5 15A7.5 7.5 0 0 1 6 16.5L4.5 15" />
+      <path d="M4.5 19.5V15H9" />
+    </svg>
+  );
+}
 export function StarIcon(p) {
   return (
     <svg viewBox="0 0 24 24" {..._o} {...p}>

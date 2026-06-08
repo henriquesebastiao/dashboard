@@ -47,6 +47,7 @@ import { useTheme } from "./theme.js";
 import { scheduleStatus, CATEGORIES } from "./schedule.js";
 import { moonInfo, visiblePlanets } from "./astro.js";
 import Search from "./Search.jsx";
+import DailyFact from "./DailyFact.jsx";
 
 /* ── data ───────────────────────────────────────────── */
 const LAT = -10.1667,
@@ -426,6 +427,9 @@ function EditorialBoard({ now, weather, links }) {
 
       {/* astronomia */}
       <AstroCard now={now} weather={weather} />
+
+      {/* curiosidade do dia */}
+      <DailyFact />
 
       {/* search bar */}
       <Search links={links} />

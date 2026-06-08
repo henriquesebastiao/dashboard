@@ -481,6 +481,95 @@ body {
   color: rgb(var(--ink-500));
 }
 
+/* ─── curiosidade do dia ─── */
+.dash .fact-card {
+  margin-top: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(var(--fg-rgb), 0.06);
+  background: rgba(var(--fg-rgb), 0.02);
+  padding: 18px 22px;
+}
+.dash .fact-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dash .fact-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .fact-eyebrow svg {
+  color: rgb(var(--ink-300));
+}
+.dash .fact-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgb(var(--ink-500));
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.3s ease;
+}
+.dash .fact-refresh:hover {
+  background: rgba(var(--fg-rgb), 0.05);
+  color: rgb(var(--ink-100));
+}
+.dash .fact-refresh:active {
+  transform: rotate(-180deg);
+}
+.dash .fact-body {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dash .fact-body--muted {
+  color: rgb(var(--ink-500));
+  font-size: 13.5px;
+}
+.dash .fact-year {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: rgb(129, 140, 248);
+  font-variant-numeric: tabular-nums;
+}
+.dash .fact-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgb(var(--ink-200));
+  max-width: 760px;
+}
+.dash .fact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgb(var(--ink-400));
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.dash .fact-link:hover {
+  color: rgb(var(--ink-100));
+}
+
 /* ─── search bar ─── */
 .dash .ed-search {
   position: relative;
