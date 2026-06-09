@@ -1,90 +1,37 @@
-/* schedule.js — cronograma pessoal (EDITE AQUI).
-   ───────────────────────────────────────────────────────────────
-   Tudo que muda o conteúdo da agenda fica neste arquivo:
-   CATEGORIES (cores/rótulos), WEEK (blocos por dia) e HABITS (hábitos).
-   A lógica (bloco atual, próximo, progresso) está no fim do arquivo —
-   normalmente não precisa mexer lá.
-   ─────────────────────────────────────────────────────────────── */
+/* schedule.js — agenda loaded from /config/schedule.yml.
+   The YAML is parsed at build time by @rollup/plugin-yaml. Edit
+   config/schedule.yml (not this file) to change the routine.
+   The logic (current/next block, progress) lives at the bottom. */
 
-/* ── categorias ─────────────────────────────────────────────────
-   key → { label, color }. Use cores que combinem com o tema. */
-export const CATEGORIES = {
-  rotina: { label: "Rotina", color: "#a3a3a3" },
-  saude: { label: "Saúde", color: "#34d399" },
-  trabalho: { label: "Trabalho", color: "#60a5fa" },
-  estudo: { label: "Estudo", color: "#c084fc" },
-  refeicao: { label: "Refeição", color: "#fbbf24" },
-  lazer: { label: "Lazer", color: "#f472b6" },
-  sono: { label: "Sono", color: "#818cf8" },
-};
+import cfg from "../config/schedule.yml";
 
-/* ── blocos reutilizáveis ────────────────────────────────────────
-   Cada bloco: { start: "HH:MM", end: "HH:MM", title, cat, note? }.
-   Um bloco cujo `end` é menor que o `start` cruza a meia-noite (sono). */
-const WEEKDAY = [
-  { start: "06:30", end: "07:00", title: "Rotina matinal", cat: "rotina", note: "Água · alongamento" },
-  { start: "07:00", end: "07:45", title: "Exercício", cat: "saude" },
-  { start: "07:45", end: "08:30", title: "Café & banho", cat: "refeicao" },
-  { start: "08:30", end: "12:00", title: "Trabalho — foco", cat: "trabalho" },
-  { start: "12:00", end: "13:00", title: "Almoço", cat: "refeicao" },
-  { start: "13:00", end: "17:30", title: "Trabalho", cat: "trabalho" },
-  { start: "17:30", end: "18:30", title: "Caminhada / pausa", cat: "saude" },
-  { start: "18:30", end: "19:30", title: "Estudo", cat: "estudo" },
-  { start: "19:30", end: "20:30", title: "Jantar", cat: "refeicao" },
-  { start: "20:30", end: "22:00", title: "Lazer", cat: "lazer" },
-  { start: "22:00", end: "22:30", title: "Leitura & planejar amanhã", cat: "rotina" },
-  { start: "22:30", end: "06:30", title: "Sono", cat: "sono" },
-];
+/* ── categories: key → { label, color } ── */
+export const CATEGORIES = cfg.categories || {};
 
-const SATURDAY = [
-  { start: "08:00", end: "08:45", title: "Acordar & rotina", cat: "rotina" },
-  { start: "08:45", end: "10:00", title: "Exercício longo", cat: "saude" },
-  { start: "10:00", end: "11:00", title: "Café da manhã", cat: "refeicao" },
-  { start: "11:00", end: "13:00", title: "Projetos pessoais", cat: "estudo" },
-  { start: "13:00", end: "14:00", title: "Almoço", cat: "refeicao" },
-  { start: "14:00", end: "18:00", title: "Lazer / social", cat: "lazer" },
-  { start: "18:00", end: "19:00", title: "Tarefas de casa", cat: "rotina" },
-  { start: "19:00", end: "20:00", title: "Jantar", cat: "refeicao" },
-  { start: "20:00", end: "23:00", title: "Lazer", cat: "lazer" },
-  { start: "23:00", end: "08:00", title: "Sono", cat: "sono" },
-];
+/* ── week: weekday index (0=Sun..6=Sat) → array of blocks ──
+   Each template block uses `category`; we normalize it to `cat`
+   so the rest of the app keeps a single field name. */
+const templates = cfg.templates || {};
 
-const SUNDAY = [
-  { start: "08:30", end: "09:30", title: "Acordar devagar", cat: "rotina" },
-  { start: "09:30", end: "10:30", title: "Exercício leve", cat: "saude" },
-  { start: "10:30", end: "11:30", title: "Café da manhã", cat: "refeicao" },
-  { start: "11:30", end: "13:00", title: "Revisão & planejar semana", cat: "estudo" },
-  { start: "13:00", end: "14:00", title: "Almoço", cat: "refeicao" },
-  { start: "14:00", end: "17:00", title: "Descanso / lazer", cat: "lazer" },
-  { start: "17:00", end: "18:30", title: "Preparar a semana", cat: "rotina" },
-  { start: "18:30", end: "19:30", title: "Jantar", cat: "refeicao" },
-  { start: "19:30", end: "22:00", title: "Lazer", cat: "lazer" },
-  { start: "22:00", end: "06:30", title: "Sono", cat: "sono" },
-];
+function normalizeBlock(b) {
+  return {
+    start: b.start,
+    end: b.end,
+    title: b.title,
+    cat: b.category || b.cat,
+    ...(b.note ? { note: b.note } : {}),
+  };
+}
 
-/* ── semana ──────────────────────────────────────────────────────
-   Índice = dia da semana do JS: 0=Domingo … 6=Sábado.
-   Troque um dia por um array próprio se quiser fugir do template. */
-export const WEEK = {
-  0: SUNDAY,
-  1: WEEKDAY,
-  2: WEEKDAY,
-  3: WEEKDAY,
-  4: WEEKDAY,
-  5: WEEKDAY,
-  6: SATURDAY,
-};
+export const WEEK = Object.fromEntries(
+  Object.entries(cfg.week || {}).map(([day, tplName]) => {
+    const tpl = templates[tplName] || [];
+    return [Number(day), tpl.map(normalizeBlock)];
+  })
+);
 
-/* ── hábitos diários ─────────────────────────────────────────────
-   Marcação salva em localStorage por data. */
-export const HABITS = [
-  { id: "agua", label: "Beber 2L de água" },
-  { id: "exercicio", label: "Exercitar-se" },
-  { id: "leitura", label: "Ler 20 min" },
-  { id: "meditar", label: "Meditar" },
-  { id: "estudo", label: "Estudar" },
-  { id: "planejar", label: "Planejar o dia" },
-];
+/* ── daily habits ── */
+export const HABITS = cfg.habits || [];
 
 export const WEEKDAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 

@@ -1,0 +1,93 @@
+# ============================================================
+#  Dashboard — general settings
+#  Edit this file to configure the app, then rebuild (npm run build)
+#  or just save while `npm run dev` is running (hot reload).
+# ============================================================
+
+# Location used for the weather forecast and the astronomy widgets.
+location:
+  city: Aripuanã
+  latitude: -10.1667
+  longitude: -59.4583
+
+# Enable / disable dashboard widgets. All default to true.
+#   clock     -> local time + date header
+#   weather   -> current conditions card
+#   forecast  -> 7-day forecast + air quality / UV
+#   agenda    -> "now / next" agenda summary card
+#   skyNow    -> astronomy card (sky now, moon, planets, alerts)
+#   facts     -> daily curiosity
+widgets:
+  clock: true
+  weather: true
+  forecast: true
+  agenda: true
+  skyNow: true
+  facts: true
+
+# Quick-link shortcuts.
+#   name     -> label shown on the card
+#   url      -> destination (opens in a new tab)
+#   icon     -> key from the icon registry (see src/config.js -> ICONS)
+#   category -> group heading; order follows `links.categories` below
+links:
+  categories:
+    - Cotidiano
+    - Desenvolvimento
+    - Documentação
+    - Ferramentas
+    - Mídia
+    - Social
+    - IA
+    - Estudos
+    - Vagas
+    - Serviços
+  items:
+    # Cotidiano
+    - { name: Agenda, url: "https://calendar.google.com", icon: calendar, category: Cotidiano }
+    - { name: Drive, url: "https://drive.google.com", icon: drive, category: Cotidiano }
+    - { name: Gmail, url: "https://mail.google.com", icon: mail, category: Cotidiano }
+
+    # Desenvolvimento
+    - { name: GitHub, url: "https://github.com", icon: github, category: Desenvolvimento }
+    - { name: PyPI, url: "https://pypi.org", icon: pypi, category: Desenvolvimento }
+    - { name: Cloudflare, url: "https://dash.cloudflare.com", icon: cloudflare, category: Desenvolvimento }
+    - { name: Docker Hub, url: "https://hub.docker.com", icon: dockerhub, category: Desenvolvimento }
+
+    # Documentação
+    - { name: Python, url: "https://docs.python.org/pt-br/3.14/", icon: python, category: Documentação }
+    - { name: FastAPI, url: "https://fastapi.tiangolo.com/", icon: fastapi, category: Documentação }
+    - { name: Django, url: "https://docs.djangoproject.com/pt-br/", icon: django, category: Documentação }
+    - { name: NextJS, url: "https://nextjs.org/docs", icon: nextjs, category: Documentação }
+    - { name: Micropython, url: "https://docs.micropython.org/en/latest/", icon: micropython, category: Documentação }
+    - { name: Docker, url: "https://docs.docker.com/", icon: docker, category: Documentação }
+
+    # Ferramentas
+    - { name: Cheatsheets, url: "https://cheatsheets.zip", icon: cheatsheets, category: Ferramentas }
+
+    # Mídia
+    - { name: YouTube, url: "https://www.youtube.com", icon: youtube, category: Mídia }
+
+    # Social
+    - { name: WhatsApp, url: "https://web.whatsapp.com", icon: chat, category: Social }
+    - { name: LinkedIn, url: "https://www.linkedin.com", icon: linkedin, category: Social }
+
+    # IA
+    - { name: Claude, url: "https://claude.ai", icon: claude, category: IA }
+    - { name: ChatGPT, url: "https://chatgpt.com", icon: chatgpt, category: IA }
+
+    # Estudos
+    - { name: Udemy, url: "https://www.udemy.com", icon: udemy, category: Estudos }
+    - { name: CS50x, url: "https://cs50.harvard.edu/x/", icon: cs50x, category: Estudos }
+    - { name: Roadmap, url: "https://roadmap.sh/dashboard", icon: roadmap, category: Estudos }
+    - { name: Seletivos IFMT, url: "https://seletivo.ifmt.edu.br/", icon: ifmt, category: Estudos }
+
+    # Vagas
+    - { name: Gupy, url: "https://portal.gupy.io/my/applications", icon: gupy, category: Vagas }
+    - { name: Glassdoor, url: "https://www.glassdoor.com.br/", icon: glassdoor, category: Vagas }
+    - { name: Sólides, url: "https://perfil.vagas.solides.com.br/", icon: solides, category: Vagas }
+
+    # Serviços
+    - { name: Energisa, url: "https://servicos.energisa.com.br/home", icon: energisa, category: Serviços }
+    - { name: DAE, url: "https://aripuana.cogesan.com.br/portal", icon: dae, category: Serviços }
+    - { name: Banco Central, url: "https://meubc.bcb.gov.br/meubc/", icon: bancocentral, category: Serviços }

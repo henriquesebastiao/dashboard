@@ -9,6 +9,7 @@ import { astroReport, astroEvents, observingIndex } from "./astro.js";
 import { getApod, getNeo } from "./nasa.js";
 import { getISSPasses } from "./iss.js";
 import SkyMap from "./SkyMap.jsx";
+import { LOCATION } from "./config.js";
 import "./astro-page.css";
 
 /* lightweight current-conditions fetch (cloud cover + humidity) for the
@@ -28,9 +29,7 @@ function getSkyWeather() {
     }));
 }
 
-const LAT = -10.1667,
-  LON = -59.4583;
-const CITY = "Aripuanã";
+const { latitude: LAT, longitude: LON, city: CITY } = LOCATION;
 const TZ = "America/Cuiaba";
 
 const tF = new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: TZ });

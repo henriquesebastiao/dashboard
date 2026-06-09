@@ -4,123 +4,17 @@
    grouped by category. */
 
 import { useState, useEffect, useMemo } from "react";
-import {
-  MailIcon,
-  CalendarIcon,
-  ChatIcon,
-  DriveIcon,
-  GitHubIcon,
-  YouTubeIcon,
-  SparkIcon,
-  SunIcon,
-  MoonIcon,
-  DropIcon,
-  WindIcon,
-  ClockIcon,
-  ArrowRightIcon,
-  StarIcon,
-  LinkedInIcon,
-  ClaudeIcon,
-  PyPIIcon,
-  CloudflareIcon,
-  DockerHubIcon,
-  CheatsheetsIcon,
-  PythonDocsIcon,
-  FastAPIDocsIcon,
-  DjangoDocsIcon,
-  NextJSDocsIcon,
-  MicropythonDocsIcon,
-  DockerDocsIcon,
-  UdemyIcon,
-  CS50xIcon,
-  RoadmapIcon,
-  IFMTIcon,
-  GupyIcon,
-  GlassdoorIcon,
-  SolidesIcon,
-  EnergisaIcon,
-  DAEIcon,
-  BancoCentralIcon,
-  WEATHER_ICON,
-} from "./icons.jsx";
+import { SunIcon, MoonIcon, DropIcon, WindIcon, ClockIcon, ArrowRightIcon, StarIcon, WEATHER_ICON } from "./icons.jsx";
 import { useTheme } from "./theme.js";
 import { scheduleStatus, CATEGORIES } from "./schedule.js";
 import { moonInfo, visiblePlanets, observingIndex, nextSkyAlert } from "./astro.js";
 import Search from "./Search.jsx";
 import DailyFact from "./DailyFact.jsx";
+import { LOCATION, WIDGETS, LINKS, LINK_CATEGORIES } from "./config.js";
 
-/* ── data ───────────────────────────────────────────── */
-const LAT = -10.1667,
-  LON = -59.4583;
-const CITY = "Aripuanã";
-
-const LINKS = [
-  // Cotidiano
-  { label: "Agenda", url: "https://calendar.google.com", Icon: CalendarIcon, cat: "Cotidiano" },
-  { label: "Drive", url: "https://drive.google.com", Icon: DriveIcon, cat: "Cotidiano" },
-  { label: "Gmail", url: "https://mail.google.com", Icon: MailIcon, cat: "Cotidiano" },
-
-  // Social
-  { label: "WhatsApp", url: "https://web.whatsapp.com", Icon: ChatIcon, cat: "Social" },
-  { label: "LinkedIn", url: "https://www.linkedin.com", Icon: LinkedInIcon, cat: "Social" },
-
-  // Desenvolvimento
-  { label: "GitHub", url: "https://github.com", Icon: GitHubIcon, cat: "Desenvolvimento" },
-  { label: "PyPI", url: "https://pypi.org", Icon: PyPIIcon, cat: "Desenvolvimento" },
-  { label: "Cloudflare", url: "https://dash.cloudflare.com", Icon: CloudflareIcon, cat: "Desenvolvimento" },
-  { label: "Docker Hub", url: "https://hub.docker.com", Icon: DockerHubIcon, cat: "Desenvolvimento" },
-
-  // Documentação
-  { label: "Python", url: "https://docs.python.org/pt-br/3.14/", Icon: PythonDocsIcon, cat: "Documentação" },
-  { label: "FastAPI", url: "https://fastapi.tiangolo.com/", Icon: FastAPIDocsIcon, cat: "Documentação" },
-  { label: "Django", url: "https://docs.djangoproject.com/pt-br/", Icon: DjangoDocsIcon, cat: "Documentação" },
-  { label: "NextJS", url: "https://nextjs.org/docs", Icon: NextJSDocsIcon, cat: "Documentação" },
-  {
-    label: "Micropython",
-    url: "https://docs.micropython.org/en/latest/",
-    Icon: MicropythonDocsIcon,
-    cat: "Documentação",
-  },
-  { label: "Docker", url: "https://docs.docker.com/", Icon: DockerDocsIcon, cat: "Documentação" },
-
-  // Ferramentas
-  { label: "Cheatsheets", url: "https://cheatsheets.zip", Icon: CheatsheetsIcon, cat: "Ferramentas" },
-
-  // Mídia
-  { label: "YouTube", url: "https://www.youtube.com", Icon: YouTubeIcon, cat: "Mídia" },
-
-  // IA
-  { label: "Claude", url: "https://claude.ai", Icon: ClaudeIcon, cat: "IA" },
-  { label: "ChatGPT", url: "https://chatgpt.com", Icon: SparkIcon, cat: "IA" },
-
-  // Estudos
-  { label: "Udemy", url: "https://www.udemy.com", Icon: UdemyIcon, cat: "Estudos" },
-  { label: "CS50x", url: "https://cs50.harvard.edu/x/", Icon: CS50xIcon, cat: "Estudos" },
-  { label: "Roadmap", url: "https://roadmap.sh/dashboard", Icon: RoadmapIcon, cat: "Estudos" },
-  { label: "Seletivos IFMT", url: "https://seletivo.ifmt.edu.br/", Icon: IFMTIcon, cat: "Estudos" },
-
-  // Vagas
-  { label: "Gupy", url: "https://portal.gupy.io/my/applications", Icon: GupyIcon, cat: "Vagas" },
-  { label: "Glassdoor", url: "https://www.glassdoor.com.br/", Icon: GlassdoorIcon, cat: "Vagas" },
-  { label: "Sólides", url: "https://perfil.vagas.solides.com.br/", Icon: SolidesIcon, cat: "Vagas" },
-
-  // Serviços
-  { label: "Energisa", url: "https://servicos.energisa.com.br/home", Icon: EnergisaIcon, cat: "Serviços" },
-  { label: "DAE", url: "https://aripuana.cogesan.com.br/portal", Icon: DAEIcon, cat: "Serviços" },
-  { label: "Banco Central", url: "https://meubc.bcb.gov.br/meubc/", Icon: BancoCentralIcon, cat: "Serviços" },
-];
-const CATS = [
-  "Cotidiano",
-  "Desenvolvimento",
-  "Documentação",
-  "Ferramentas",
-  "Mídia",
-  "Social",
-  "IA",
-  "Estudos",
-  "Vagas",
-  "Serviços",
-];
+/* ── data (from config/settings.yml) ─────────────────── */
+const { latitude: LAT, longitude: LON, city: CITY } = LOCATION;
+const CATS = LINK_CATEGORIES;
 
 /* ── weather ────────────────────────────────────────── */
 function mapWeather(code) {
@@ -560,69 +454,75 @@ function EditorialBoard({ now, weather, air, links }) {
     <div className="ed-board">
       {/* header: clock left, weather card right */}
       <div className="ed-header">
-        <div>
-          <div className="status" style={{ marginBottom: 18 }}>
-            Horário local · {CITY}
+        {WIDGETS.clock ? (
+          <div>
+            <div className="status" style={{ marginBottom: 18 }}>
+              Horário local · {CITY}
+            </div>
+            <div className="mono ed-clock">
+              {pad(now.getHours())}
+              <span style={{ color: "rgb(var(--ink-600))" }}>:</span>
+              {pad(now.getMinutes())}
+            </div>
+            <div style={{ marginTop: 16, fontSize: 16, color: "rgb(var(--ink-400))" }}>{fmtDate(now)}</div>
           </div>
-          <div className="mono ed-clock">
-            {pad(now.getHours())}
-            <span style={{ color: "rgb(var(--ink-600))" }}>:</span>
-            {pad(now.getMinutes())}
-          </div>
-          <div style={{ marginTop: 16, fontSize: 16, color: "rgb(var(--ink-400))" }}>{fmtDate(now)}</div>
-        </div>
+        ) : (
+          <div />
+        )}
 
         <div className="ed-side">
-          <div className="ed-weather">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <div>
-                <div
-                  className="mono"
-                  style={{ fontSize: 40, fontWeight: 500, color: "rgb(var(--ink-100))", lineHeight: 1 }}
-                >
-                  {weather.ok ? `${weather.temp}°` : "—"}
+          {WIDGETS.weather && (
+            <div className="ed-weather">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div
+                    className="mono"
+                    style={{ fontSize: 40, fontWeight: 500, color: "rgb(var(--ink-100))", lineHeight: 1 }}
+                  >
+                    {weather.ok ? `${weather.temp}°` : "—"}
+                  </div>
+                  <div style={{ fontSize: 13, color: "rgb(var(--ink-400))", marginTop: 8 }}>
+                    {weather.loading ? "carregando…" : weather.label}
+                  </div>
                 </div>
-                <div style={{ fontSize: 13, color: "rgb(var(--ink-400))", marginTop: 8 }}>
-                  {weather.loading ? "carregando…" : weather.label}
-                </div>
+                <WI width={40} height={40} style={{ color: "rgb(var(--ink-300))" }} />
               </div>
-              <WI width={40} height={40} style={{ color: "rgb(var(--ink-300))" }} />
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 18,
+                  marginTop: 18,
+                  paddingTop: 16,
+                  borderTop: "1px solid rgba(var(--fg-rgb),0.05)",
+                }}
+              >
+                <span className="weather-chip" style={{ gap: 7, fontSize: 12.5 }}>
+                  <DropIcon width={15} height={15} style={{ color: "rgb(var(--ink-500))" }} />
+                  {weather.ok ? `${weather.humidity}%` : "—"}
+                </span>
+                <span className="weather-chip" style={{ gap: 7, fontSize: 12.5 }}>
+                  <WindIcon width={15} height={15} style={{ color: "rgb(var(--ink-500))" }} />
+                  {weather.ok ? `${weather.wind} km/h` : "—"}
+                </span>
+                <span className="weather-chip" style={{ gap: 7, fontSize: 12.5 }} title="sensação">
+                  ≈{weather.ok ? `${weather.feels}°` : "—"}
+                </span>
+              </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 18,
-                marginTop: 18,
-                paddingTop: 16,
-                borderTop: "1px solid rgba(var(--fg-rgb),0.05)",
-              }}
-            >
-              <span className="weather-chip" style={{ gap: 7, fontSize: 12.5 }}>
-                <DropIcon width={15} height={15} style={{ color: "rgb(var(--ink-500))" }} />
-                {weather.ok ? `${weather.humidity}%` : "—"}
-              </span>
-              <span className="weather-chip" style={{ gap: 7, fontSize: 12.5 }}>
-                <WindIcon width={15} height={15} style={{ color: "rgb(var(--ink-500))" }} />
-                {weather.ok ? `${weather.wind} km/h` : "—"}
-              </span>
-              <span className="weather-chip" style={{ gap: 7, fontSize: 12.5 }} title="sensação">
-                ≈{weather.ok ? `${weather.feels}°` : "—"}
-              </span>
-            </div>
-          </div>
-          <AgendaCard now={now} />
+          )}
+          {WIDGETS.agenda && <AgendaCard now={now} />}
         </div>
       </div>
 
       {/* clima estendido: 7 dias + ar/UV */}
-      <WeatherDetail weather={weather} air={air} />
+      {WIDGETS.forecast && <WeatherDetail weather={weather} air={air} />}
 
       {/* astronomia */}
-      <AstroCard now={now} weather={weather} />
+      {WIDGETS.skyNow && <AstroCard now={now} weather={weather} />}
 
       {/* curiosidade do dia */}
-      <DailyFact />
+      {WIDGETS.facts && <DailyFact />}
 
       {/* search bar */}
       <Search links={links} />
