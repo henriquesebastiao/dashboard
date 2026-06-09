@@ -106,3 +106,16 @@ export const LINKS = items.map((l, i) => ({
   cat: l.category,
   Icon: ICONS[l.icon] || ArrowRightIcon,
 }));
+
+/* ── docker containers ──
+   Static list from YAML; live status (running/uptime/health/ip) is
+   fetched at runtime from the embedded backend at /api/containers/status,
+   keyed by the `container` field below. */
+const containerItems = settings.containers || [];
+export const CONTAINERS = containerItems.map((c, i) => ({
+  key: `${c.container}-${i}`,
+  container: c.container,
+  name: c.name || c.container,
+  url: c.url,
+  icon: c.icon || c.container,
+}));

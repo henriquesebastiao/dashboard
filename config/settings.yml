@@ -91,3 +91,40 @@ links:
     - { name: Energisa, url: "https://servicos.energisa.com.br/home", icon: energisa, category: Serviços }
     - { name: DAE, url: "https://aripuana.cogesan.com.br/portal", icon: dae, category: Serviços }
     - { name: Banco Central, url: "https://meubc.bcb.gov.br/meubc/", icon: bancocentral, category: Serviços }
+
+# ============================================================
+#  Containers — Docker apps tracked on the dashboard.
+#
+#  Live status (running, uptime, health, ip) comes from the host
+#  Docker socket via the embedded backend. The list itself is
+#  static and read at build time.
+#
+#  Fields:
+#    container -> Docker container_name (used to query status)
+#    name      -> label shown on the card
+#    url       -> destination opened on click
+#    icon      -> slug from https://selfh.st/icons/  (filename without
+#                 extension, e.g. "portainer", "uptime-kuma"). The SVG
+#                 is loaded from the selfh.st CDN and rendered as a
+#                 silhouette so it matches the current theme.
+# ============================================================
+containers:
+  - { container: calibre-web, name: Calibre, url: "http://calibre.local", icon: calibre-web }
+  - { container: cloudflared, name: Cloudflared, icon: cloudflare }
+  - { container: downtify, name: Downtify, url: "http://downtify.local", icon: docker }
+  - { container: dozzle, name: Dozzle, url: "http://dozzle.local", icon: dozzle }
+  - { container: duplicati, name: Duplicati, url: "http://172.16.0.2:8018", icon: duplicati }
+  - { container: filebrowser, name: File Browser, url: "http://filebrowser.local", icon: file-explorer }
+  - { container: freshrss, name: FreshRSS, url: "http://freshrss.local", icon: freshrss }
+  - { container: grafana, name: Grafana, url: "http://grafana.local", icon: grafana }
+  - { container: jellyfin, name: Jellyfin, url: "http://jellyfin.local", icon: jellyfin }
+  - { container: komodo-core, name: Komodo, url: "http://komodo.local", icon: komodo }
+  - { container: librespeed, name: Librespeed, url: "http://librespeed.local", icon: librespeed }
+  - { container: metube, name: Metube, url: "http://metube.local", icon: metube }
+  - { container: navidrome, name: Navidrome, url: "http://navidrome.local", icon: navidrome }
+  - { container: nginx-proxy-manager, name: Nginx Proxy Manager, url: "http://proxy.local", icon: nginx-proxy-manager }
+  - { container: pihole, name: Pi-hole, url: "http://pihole.local/admin", icon: pi-hole }
+  - { container: stirling-pdf, name: Stirling PDF, url: "http://stirling-pdf.local", icon: stirling-pdf }
+  - { container: uptime-kuma, name: Uptime Kuma, url: "http://uptime.local/dashboard", icon: uptime-kuma }
+  - { container: vaultwarden, name: Vaultwarden, url: "https://vault.henriquesebastiao.com", icon: vaultwarden }
+  - { container: zabbix-frontend, name: Zabbix, url: "http://zabbix.local", icon: zabbix }

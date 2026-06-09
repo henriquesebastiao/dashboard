@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "PORT=8021 node server/index.js",
     "build": "vite build",
+    "start": "node server/index.js",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -14,6 +16,8 @@
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",
+    "dockerode": "^4.0.12",
+    "express": "^4.22.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "satellite.js": "^5.0.0",

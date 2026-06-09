@@ -196,6 +196,13 @@ export function CheckIcon(p) {
     </svg>
   );
 }
+export function XIcon(p) {
+  return (
+    <svg viewBox="0 0 24 24" {..._o} {...p}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
 export function RefreshIcon(p) {
   return (
     <svg viewBox="0 0 24 24" {..._o} {...p}>

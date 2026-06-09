@@ -915,6 +915,213 @@ body {
   font-size: 13px;
 }
 
+/* ─── docker containers section ───
+   Compact grid of cards between the search bar and the link columns.
+   Icons load from selfh.st via jsDelivr and are rendered as a silhouette
+   in the active theme color via a CSS filter, satisfying the "preto e
+   branco" requirement without needing a per-icon monochrome asset. */
+.dash .ct-section {
+  margin-top: 32px;
+}
+.dash .ct-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.dash .ct-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: rgb(var(--ink-500));
+  font-variant-numeric: tabular-nums;
+}
+.dash .ct-summary-ok {
+  color: rgb(52, 211, 153);
+  font-weight: 600;
+}
+.dash .ct-summary-sep {
+  color: rgb(var(--ink-600));
+}
+.dash .ct-summary-err {
+  color: rgb(248, 113, 113);
+  font-weight: 500;
+}
+.dash .ct-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.dash .ct-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(var(--fg-rgb), 0.06);
+  background: rgba(var(--fg-rgb), 0.02);
+  text-decoration: none;
+  color: rgb(var(--ink-100));
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.18s ease;
+  isolation: isolate;
+}
+.dash .ct-card:hover {
+  border-color: rgba(var(--fg-rgb), 0.2);
+  background: rgba(var(--fg-rgb), 0.04);
+  transform: translateY(-1px);
+  /* lift the hovered card so its popover paints above sibling cards
+     instead of being covered by them (which looked like transparency) */
+  z-index: 20;
+}
+.dash .ct-card.is-down {
+  opacity: 0.6;
+}
+.dash .ct-card.is-down:hover {
+  opacity: 1;
+}
+
+/* icon wrapper — small rounded square with the silhouette inside.
+   The img comes from selfh.st (full color SVG); the filter knocks every
+   color out and re-tints it to a single foreground tone that matches
+   the active theme (white on dark, black on light). */
+.dash .ct-icon-wrap {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(var(--fg-rgb), 0.05);
+}
+.dash .ct-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+}
+.dash.light .ct-icon {
+  filter: brightness(0);
+  opacity: 0.78;
+}
+.dash .ct-icon-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(var(--ink-300));
+}
+.dash .ct-icon-wrap--fallback .ct-icon-fallback {
+  display: inline-flex;
+}
+
+.dash .ct-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dash .ct-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: rgb(var(--ink-100));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash .ct-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .ct-card.is-ok .ct-status {
+  color: rgb(52, 211, 153);
+}
+.dash .ct-card.is-down .ct-status {
+  color: rgb(248, 113, 113);
+}
+
+/* popover — appears on hover, anchored just below the card */
+.dash .ct-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 12;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--fg-rgb), 0.12);
+  background: rgb(var(--ink-900));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease,
+    visibility 0s linear 0.16s;
+  pointer-events: none;
+}
+.dash .ct-card:hover .ct-popover,
+.dash .ct-card:focus-visible .ct-popover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0s, 0s, 0s;
+}
+.dash .ct-pop-row {
+  display: contents;
+}
+.dash .ct-pop-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.dash .ct-pop-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: rgb(var(--ink-200));
+}
+.dash .ct-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.dash .ct-dot.is-ok {
+  background: rgb(52, 211, 153);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.45);
+}
+.dash .ct-dot.is-down {
+  background: rgb(248, 113, 113);
+  box-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+}
+
 /* tablet — 2 link columns; stack the side cards so the header stays short */
 @media (max-width: 880px) {
   .dash .ed-grid {
@@ -972,6 +1179,13 @@ body {
   .dash .wx-air {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+  .dash .ct-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  /* no hover on touch — hide the detailed popover entirely on mobile */
+  .dash .ct-popover {
+    display: none;
   }
 }
 

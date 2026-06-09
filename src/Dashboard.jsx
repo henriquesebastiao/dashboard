@@ -10,6 +10,7 @@ import { scheduleStatus, CATEGORIES } from "./schedule.js";
 import { moonInfo, visiblePlanets, observingIndex, nextSkyAlert } from "./astro.js";
 import Search from "./Search.jsx";
 import DailyFact from "./DailyFact.jsx";
+import Containers from "./Containers.jsx";
 import { LOCATION, WIDGETS, LINKS, LINK_CATEGORIES } from "./config.js";
 
 /* ── data (from config/settings.yml) ─────────────────── */
@@ -526,6 +527,9 @@ function EditorialBoard({ now, weather, air, links }) {
 
       {/* search bar */}
       <Search links={links} />
+
+      {/* docker containers — between search and shortcut links */}
+      <Containers />
 
       {/* link columns */}
       <div className="ed-grid">

@@ -4,10 +4,13 @@ services:
     build: .
     ports:
       - "8021:80"
-    restart:
-      unless-stopped
+    restart: unless-stopped
     environment:
       PUID: 1000
       PGID: 1000
+    volumes:
+      # read-only access to the host's Docker socket so the embedded
+      # backend can inspect containers and expose live status to the UI
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     dns:
       - 172.16.0.2
