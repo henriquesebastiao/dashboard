@@ -3,4 +3,11 @@ services:
     container_name: dashboard
     build: .
     ports:
-      - "8050:80"
+      - "8021:80"
+    restart:
+      unless-stopped
+    environment:
+      PUID: 1000
+      PGID: 1000
+    dns:
+      - 172.16.0.2
