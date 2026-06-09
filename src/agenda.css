@@ -365,6 +365,92 @@
   box-shadow: 0 0 0 1.5px var(--cat);
   background: color-mix(in srgb, var(--cat) 32%, rgb(var(--ink-900)));
 }
+.ag-ev:hover {
+  box-shadow: 0 0 0 1.5px var(--cat);
+  filter: brightness(1.12);
+}
+
+/* hover popover (desktop) — detalhes do item da semana.
+   position:fixed é definido inline a partir do retângulo do item. */
+.ag-ev-pop {
+  --cat: #a3a3a3;
+  position: fixed;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(var(--fg-rgb), 0.12);
+  border-left: 3px solid var(--cat);
+  background: rgb(var(--ink-900));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  animation: ag-pop-in 0.14s ease;
+}
+@keyframes ag-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.ag-ev-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ag-ev-pop-day {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgb(var(--ink-500));
+}
+.ag-ev-pop-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: rgb(var(--ink-100));
+}
+.ag-ev-pop-times {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(var(--fg-rgb), 0.07);
+}
+.ag-ev-pop-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+.ag-ev-pop-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--ink-500));
+}
+.ag-ev-pop-val {
+  font-size: 13.5px;
+  color: rgb(var(--ink-100));
+  font-variant-numeric: tabular-nums;
+}
+.ag-ev-pop-note {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(var(--fg-rgb), 0.07);
+}
+.ag-ev-pop-note p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--ink-200));
+}
 
 .ag-cal-nowline {
   position: absolute;

@@ -114,9 +114,68 @@ function NowStrip({ status }) {
   );
 }
 
+/* duração formatada de um bloco ("1h30" / "45min") */
+function fmtSpan(block) {
+  const span = blockSpan(block);
+  return span >= 60 ? `${Math.floor(span / 60)}h${span % 60 ? pad(span % 60) : ""}` : `${span}min`;
+}
+
+/* popover (desktop) — aparece ao passar o mouse sobre um item da semana.
+   Usa position:fixed ancorado no retângulo do item para não ser recortado
+   pelos containers com overflow da grade. */
+function EventPopover({ hover }) {
+  if (!hover) return null;
+  const { block, day, rect } = hover;
+  const c = cat(block.cat);
+
+  const W = 248;
+  const GAP = 10;
+  let left = rect.right + GAP;
+  if (left + W > window.innerWidth - 8) left = rect.left - W - GAP;
+  if (left < 8) left = 8;
+
+  const estH = block.note ? 168 : 132;
+  let top = rect.top;
+  if (top + estH > window.innerHeight - 8) top = window.innerHeight - estH - 8;
+  if (top < 8) top = 8;
+
+  return (
+    <div className="ag-ev-pop" style={{ left, top, width: W, "--cat": c.color }} role="tooltip">
+      <div className="ag-ev-pop-head">
+        <span className="ag-cat-tag ag-cat-tag--sm" style={{ "--cat": c.color }}>
+          {c.label}
+        </span>
+        <span className="ag-ev-pop-day">{WEEKDAY_FULL[day]}</span>
+      </div>
+      <div className="ag-ev-pop-title">{block.title}</div>
+      <div className="ag-ev-pop-times">
+        <div className="ag-ev-pop-row">
+          <span className="ag-ev-pop-label">Início</span>
+          <span className="ag-ev-pop-val mono">{block.start}</span>
+        </div>
+        <div className="ag-ev-pop-row">
+          <span className="ag-ev-pop-label">Término</span>
+          <span className="ag-ev-pop-val mono">{block.end}</span>
+        </div>
+        <div className="ag-ev-pop-row">
+          <span className="ag-ev-pop-label">Duração</span>
+          <span className="ag-ev-pop-val mono">{fmtSpan(block)}</span>
+        </div>
+      </div>
+      {block.note && (
+        <div className="ag-ev-pop-note">
+          <span className="ag-ev-pop-label">Notas</span>
+          <p>{block.note}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── grade semanal (estilo calendário) ─────────────────────────── */
 function WeekGrid({ now, today, status, onPickDay }) {
   const scrollRef = useRef(null);
+  const [hover, setHover] = useState(null);
   const nowMin = now.getHours() * 60 + now.getMinutes();
   const total = 24 * HOUR_H;
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -146,7 +205,7 @@ function WeekGrid({ now, today, status, onPickDay }) {
         ))}
       </div>
 
-      <div className="ag-cal-scroll" ref={scrollRef}>
+      <div className="ag-cal-scroll" ref={scrollRef} onScroll={() => hover && setHover(null)}>
         <div className="ag-cal-grid" style={{ height: total }}>
           <div className="ag-cal-gutter">
             {hours.map((h) => (
@@ -174,7 +233,10 @@ function WeekGrid({ now, today, status, onPickDay }) {
                           "ag-ev" + (past ? " is-past" : "") + (live ? " is-now" : "") + (h < 34 ? " is-tiny" : "")
                         }
                         style={{ top: sg.sMin * PXM, height: Math.max(h - 2, 16), "--cat": c.color }}
-                        title={`${sg.block.start}–${sg.block.end} · ${sg.block.title}`}
+                        onMouseEnter={(e) =>
+                          setHover({ block: sg.block, day: d, rect: e.currentTarget.getBoundingClientRect() })
+                        }
+                        onMouseLeave={() => setHover(null)}
                       >
                         <span className="ag-ev-title">{sg.block.title}</span>
                         <span className="ag-ev-time mono">{sg.block.start}</span>
@@ -192,6 +254,7 @@ function WeekGrid({ now, today, status, onPickDay }) {
           </div>
         </div>
       </div>
+      <EventPopover hover={hover} />
     </div>
   );
 }
